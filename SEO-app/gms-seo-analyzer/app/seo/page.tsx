@@ -87,7 +87,8 @@ function SeoDashboard() {
         setModuleStatus((prev) => ({ ...prev, [id]: status }));
     }, []);
 
-    const fetchModule = useCallback(async (id: SeoModuleId, endpoint: string, payload: Record<string, unknown>, setter: (d: unknown) => void) => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const fetchModule = useCallback(async (id: SeoModuleId, endpoint: string, payload: Record<string, unknown>, setter: (d: any) => void) => {
         setStatus(id, 'loading');
         try {
             const res = await axios.post(endpoint, payload);
