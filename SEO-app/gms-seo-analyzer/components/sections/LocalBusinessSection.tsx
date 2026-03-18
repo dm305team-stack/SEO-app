@@ -122,7 +122,7 @@ export default function LocalBusinessSection({
                             </button>
                         </div>
                         <p className="text-xs text-slate-500 mt-1.5">
-                            Requires <code className="text-electric-400">GOOGLE_PLACES_API_KEY</code> in your .env.local
+                            Requires <code className="text-electric-400">GOOGLE_API_KEY</code> with Places API enabled
                         </p>
                     </div>
                 </form>
