@@ -135,6 +135,45 @@ function SeoDashboard() {
         runAll();
     }, [domain, fetchModule]);
 
+    const [pdfLoading, setPdfLoading] = useState(false);
+
+    const handleDownloadReport = useCallback(async () => {
+        if (!domain) return;
+        setPdfLoading(true);
+        try {
+            const { pdf } = await import('@react-pdf/renderer');
+            const { default: FullAuditPDF } = await import('@/components/pdf/FullAuditPDF');
+            const analysisData = {
+                domain,
+                serp: serpData,
+                keywords: keywordsData,
+                domainAnalytics: domainAnalyticsData,
+                labs: labsData,
+                backlinks: backlinksData,
+                onPage: onPageData,
+                content: contentData,
+                merchant: null,
+                appData: null,
+                business: businessData,
+                appendix: appendixData,
+                aiOptimization: aiOptData,
+                trends: trendsData,
+                aiReport: aiReportData,
+            };
+            const blob = await pdf(<FullAuditPDF domain={domain} data={analysisData} aiReport={aiReportData?.report} />).toBlob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `seo-report-${domain}-${new Date().toISOString().slice(0, 10)}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+        } catch (err) {
+            console.error('PDF generation failed:', err);
+        } finally {
+            setPdfLoading(false);
+        }
+    }, [domain, serpData, keywordsData, domainAnalyticsData, labsData, backlinksData, onPageData, contentData, businessData, appendixData, aiOptData, trendsData, aiReportData]);
+
     // Map ModuleName -> ModuleStatus for LoadingScreen (only uses ModuleName keys)
     const legacyStatus = moduleStatus as Partial<Record<ModuleName, ModuleStatus>>;
 
@@ -173,7 +212,12 @@ function SeoDashboard() {
 
     return (
         <div className="min-h-screen flex flex-col">
-            <Header domain={domain || undefined} />
+            <Header
+                domain={domain || undefined}
+                showDownloadReport={!!domain}
+                onDownloadReport={handleDownloadReport}
+                isReportLoading={pdfLoading}
+            />
 
             <div className="flex-1 flex max-w-[1440px] mx-auto w-full">
                 {/* Sidebar */}
